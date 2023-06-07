@@ -1,4 +1,5 @@
 const newrelic = require('newrelic');
+const graphql = require("./services/init-graphql");
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -33,6 +34,7 @@ app.use(createSession({ sessionSecret: config.cookie_secret, session_timeout: co
 
 
 app.use('/api/auth', authRouter);
+app.use('/api/graphql', graphql);
 
 if (process.env.NODE_ENV === 'development') {
   console.log("Running in development mode, local test page enabled");
