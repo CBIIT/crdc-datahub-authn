@@ -69,27 +69,18 @@ router.get('/ping', function (req, res, next) {
 /* GET version for health checking and version checking. */
 router.get('/version', function (req, res, next) {
     res.json({
-        version: config.version, date: config.date, variables: {
-            version: !!process.env.VERSION,
-            date: !!process.env.DATE,
-            idp: !!process.env.IDP,
-            session_secret: !!process.env.SESSION_SECRET,
-            session_timeout: !!process.env.SESSION_TIMEOUT,  // 30 minutes
-            noAutoLogin: !!process.env.NO_AUTO_LOGIN,
-            nih: {
-                CLIENT_ID: !!process.env.NIH_CLIENT_ID,
-                CLIENT_SECRET: !!process.env.NIH_CLIENT_SECRET,
-                BASE_URL: !!process.env.NIH_BASE_URL,
-                REDIRECT_URL: !!process.env.NIH_REDIRECT_URL,
-                USERINFO_URL: !!process.env.NIH_USERINFO_URL,
-                AUTHORIZE_URL: !!process.env.NIH_AUTHORIZE_URL,
-                TOKEN_URL: !!process.env.NIH_TOKEN_URL,
-                LOGOUT_URL: !!process.env.NIH_LOGOUT_URL,
-                SCOPE: !!process.env.NIH_SCOPE,
-                PROMPT: !!process.env.NIH_PROMPT
-            },
-        }
+        version: config.version, date: config.date
     });
+});
+
+router.get('/test-login', function (req, res, next) {
+    let newUrl = `${config.nih.AUTHORIZE_URL}?`;
+    newUrl += `client_id=${config.nih.CLIENT_ID}`;
+    newUrl += `&redirect_uri=${config.nih.REDIRECT_URL}`;
+    newUrl += `&response_type=code`;
+    newUrl += `&scope=${config.nih.SCOPE}`;
+    newUrl += `&prompt=login`;
+    res.redirect(newUrl);
 });
 
 module.exports = router;
