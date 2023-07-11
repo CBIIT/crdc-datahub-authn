@@ -34,18 +34,15 @@ app.use(createSession(config.session_secret, config.session_timeout, config.mong
 
 app.use('/api/authn', authRouter);
 
-if (process.env.NODE_ENV === 'development') {
-  console.log("Running in development mode, local test page enabled");
-  app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');
 
-  app.get('/', (req, res) => {
-    res.render('index', {
-      nihClientID: config.nih.CLIENT_ID,
-      nihRedirectURL: config.nih.REDIRECT_URL,
-      noAutoLogin: config.noAutoLogin
-    });
+app.get('/login', (req, res) => {
+  res.render('index', {
+    nihClientID: config.nih.CLIENT_ID,
+    nihRedirectURL: config.nih.REDIRECT_URL,
+    noAutoLogin: config.noAutoLogin
   });
-}
+});
 
 
 // catch 404 and forward to error handler
