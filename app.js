@@ -36,7 +36,7 @@ app.use('/api/authn', authRouter);
 
 app.set('view engine', 'ejs');
 
-app.get('/login', (req, res) => {
+app.get('/api/authn/test-login', (req, res) => {
   res.render('index', {
     nihClientID: config.nih.CLIENT_ID,
     nihRedirectURL: config.nih.REDIRECT_URL,
