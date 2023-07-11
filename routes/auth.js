@@ -3,6 +3,7 @@ const router = express.Router();
 const idpClient = require('../idps');
 const config = require('../config');
 const {logout} = require('../controllers/auth-api')
+const {NIH} = require("../constants/idp-constants");
 
 /* Login */
 router.post('/login', async function (req, res) {
@@ -68,7 +69,26 @@ router.get('/ping', function (req, res, next) {
 /* GET version for health checking and version checking. */
 router.get('/version', function (req, res, next) {
     res.json({
-        version: config.version, date: config.date
+        version: config.version, date: config.date, variables: {
+            version: !!process.env.VERSION,
+            date: !!process.env.DATE,
+            idp: !!process.env.IDP,
+            session_secret: !!process.env.SESSION_SECRET,
+            session_timeout: !!process.env.SESSION_TIMEOUT,  // 30 minutes
+            noAutoLogin: !!process.env.NO_AUTO_LOGIN,
+            nih: {
+                CLIENT_ID: !!process.env.NIH_CLIENT_ID,
+                CLIENT_SECRET: !!process.env.NIH_CLIENT_SECRET,
+                BASE_URL: !!process.env.NIH_BASE_URL,
+                REDIRECT_URL: !!process.env.NIH_REDIRECT_URL,
+                USERINFO_URL: !!process.env.NIH_USERINFO_URL,
+                AUTHORIZE_URL: !!process.env.NIH_AUTHORIZE_URL,
+                TOKEN_URL: !!process.env.NIH_TOKEN_URL,
+                LOGOUT_URL: !!process.env.NIH_LOGOUT_URL,
+                SCOPE: !!process.env.NIH_SCOPE,
+                PROMPT: !!process.env.NIH_PROMPT
+            },
+        }
     });
 });
 
