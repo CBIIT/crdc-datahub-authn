@@ -48,6 +48,32 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 
+app.get('/check-session', (req, res) => {
+  if (req.session && req.session.cookie.expires) {
+    const currentTime = new Date();
+    const sessionExpiration = new Date(req.session.cookie.expires);
+
+    if (currentTime < sessionExpiration) {
+      res.send('Session is still valid.');
+    } else {
+      res.send('Session has expired.');
+    }
+  } else {
+    res.send('No session found.');
+  }
+});
+
+
+app.get('/refresh-session', (req, res) => {
+  if (req.session) {
+    req.session.touch(); // Manually update the session's access time
+    res.send('Session refreshed.');
+  } else {
+    res.send('No session found.');
+  }
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
