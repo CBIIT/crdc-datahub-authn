@@ -83,21 +83,20 @@ router.get('/version', function (req, res, next) {
 
 router.get('/session-ttl',async function(req, res){
     let response
-    if (req.sessionID){
-
-        const dbService = new MongoQueries(config.mongo_db_connection_string, DATABASE_NAME);
-        dbConnector.connect().then( async () => {
-            const sessionCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, SESSION_COLLECTION);
-            const dataInterface = new Sessions(sessionCollection)
-            response = {
-                ttl: await dataInterface.getSession(req.sessionID),
-            }
-
-            res.send(response);
-
-        })
+    if (req.session){
+        const currentTime = Date.now();
+        const sessionExpiration = new Date(req.session.cookie.expires);
+        const sessionExpirationTime = sessionExpiration.valueOf();
+        console.log(currentTime)
+        console.log(sessionExpiration.valueOf())
+        if(!sessionExpiration || currentTime > sessionExpirationTime){
+            response = {ttl:0}
+        }else{
+            response = {ttl: sessionExpiration.valueOf() - currentTime}
+        }
+        res.json(response)
     }else{
-        res.json({ttl: null, error: "An internal server error occurred, please contact the administrators"});
+        res.json({ttl: null, error: "Session is not created."});
     }
 })
 
