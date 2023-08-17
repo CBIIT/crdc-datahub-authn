@@ -78,8 +78,6 @@ router.get('/session-ttl',async function(req, res){
         const currentTime = Date.now();
         const sessionExpiration = new Date(req.session.cookie.expires);
         const sessionExpirationTime = sessionExpiration.valueOf();
-        console.log(currentTime)
-        console.log(sessionExpiration.valueOf())
         if(!sessionExpiration || currentTime > sessionExpirationTime){
             response = {ttl:0}
         }else{
