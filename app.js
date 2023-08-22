@@ -35,6 +35,32 @@ app.use(cookieParser());
 app.use('/api/authn', checkRouter);
 
 app.use(createSession(config.session_secret, config.session_timeout, config.mongo_db_connection_string));
+
+app.use('/api/authn/session-ttl', async function(req, res){
+  if (req.session && req.session.cookie.expires) {
+    const currentTime = new Date();
+    const sessionExpiration = new Date(req.session.cookie.expires);
+
+    if (currentTime < sessionExpiration) {
+      res.send('Session is still valid.');
+    } else {
+      res.send('Session has expired.');
+    }
+  } else {
+    res.send('No session found.');
+  }
+});
+
+app.use('/api/authn/session-refresh', async function(req, res){
+  if (req.session) {
+    req.session.touch(); // Manually update the session's access time
+    res.send('Session refreshed.');
+  } else {
+    res.send('No session found.');
+  }
+});
+
+
 app.use('/api/authn', authRouter);
 
 if (process.env.NODE_ENV === 'development') {
