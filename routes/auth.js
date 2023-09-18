@@ -69,5 +69,20 @@ router.post('/authenticated', async function (req, res, next) {
     }
 });
 
+// Session timeout
+// Return in s if the seesion is active.
+router.get('/session-ttl', async function(req, res){
+    if (req.session) {
+      const currentTime = new Date();
+      const sessionExpiration = new Date(req.session.cookie.expires);
+      if (!req.session.userInfo) {
+        res.send('Session has expired.');
+      } else {
+        res.send({ttl: Math.round((sessionExpiration-currentTime)/1000)});
+      }
+    } else {
+      res.send('No session found.');
+    }
+  });
 
 module.exports = router;
