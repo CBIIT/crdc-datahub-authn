@@ -36,6 +36,15 @@ app.use('/api/authn', checkRouter);
 app.use(createSession(config.session_secret, config.session_timeout, config.mongo_db_connection_string));
 app.use('/api/authn', authRouter);
 
+
+process.on("unhandledRejection", (reason, promise) => {
+  if (reason.name === "MongoServerSelectionError") {
+    console.error("MongoServerSelectionError caught:", reason.message);
+  } else {
+    console.error("Unhandled Rejection:", reason);
+  }
+});
+
 if (process.env.NODE_ENV === 'development') {
   console.log("Running in development mode, local test page enabled");
   app.set('view engine', 'ejs');
