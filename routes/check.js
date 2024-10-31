@@ -10,10 +10,14 @@ const {MongoDBHealthCheck} = require("../crdc-datahub-database-drivers/mongo-hea
 const {ERROR} = require("../crdc-datahub-database-drivers/constants/error-constants");
 
 let dataInterface;
-dbConnector.connect().then( async () => {
+let isConnected = false;
+async function connectToDatabase() {
+    if (!isConnected) {
     const sessionCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, SESSION_COLLECTION);
     dataInterface = new ttlSessions(sessionCollection);
-});
+        isConnected = true;
+    }
+}
 
 router.get('/session-ttl',async function(req, res){
     let sessionID
@@ -25,6 +29,7 @@ router.get('/session-ttl',async function(req, res){
         sessionID =  req.cookies["connect.sid"].match(':.*[.]')[0].slice(1,-1);
     }
     if (sessionID){
+        await connectToDatabase();
         response = {
             ttl: await dataInterface.getSession(sessionID)
         }

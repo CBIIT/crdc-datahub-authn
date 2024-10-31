@@ -7,7 +7,7 @@ const fs = require('fs');
 const cors = require('cors');
 const config = require('./config');
 const cookieParser = require('cookie-parser');
-
+const {DatabaseConnector} = require("./crdc-datahub-database-drivers/database-connector");
 console.log(config);
 
 const LOG_FOLDER = 'logs';
@@ -21,6 +21,18 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, LOG_FOLDER, 'a
 
 var authRouter = require('./routes/auth');
 var checkRouter = require('./routes/check');
+let isConnected = false;
+async function connectToDatabase() {
+  if (!isConnected) {
+    const connector = new DatabaseConnector(config.mongo_db_connection_string);
+    await connector.connect();
+    isConnected = true;
+    if (isConnected) {
+      app.use(createSession(config.session_secret, config.session_timeout, config.mongo_db_connection_string));
+      await connector.disconnect();
+    }
+  }
+}
 var app = express();
 app.use(cors());
 
@@ -30,10 +42,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+connectToDatabase().catch(error => console.error('Error initializing database connection:', error));
+
+// Middleware to handle requests only if session store is available
+app.use((req, res, next) => {
+  if (!isConnected) {
+    return res.status(503).send('The database is not unavailable, please try again later');
+  }
+  next();
+});
 // Ping/version/session-ttl
 app.use('/api/authn', checkRouter);
-
-app.use(createSession(config.session_secret, config.session_timeout, config.mongo_db_connection_string));
 app.use('/api/authn', authRouter);
 
 if (process.env.NODE_ENV === 'development') {

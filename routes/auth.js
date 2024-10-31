@@ -12,20 +12,28 @@ const {ERROR} = require("../crdc-datahub-database-drivers/constants/error-consta
 const dbConnector = new DatabaseConnector(config.mongo_db_connection_string);
 let logCollection;
 let userService;
-dbConnector.connect().then(() => {
-    logCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, LOG_COLLECTION);
-    const userCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, USER_COLLECTION);
-    userService = new User(userCollection, logCollection);
-});
+
+let isConnected = false;
+async function connectToDatabase() {
+    if (!isConnected) {
+        await dbConnector.connect();
+        logCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, LOG_COLLECTION);
+        const userCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, USER_COLLECTION);
+        userService = new User(userCollection, logCollection);
+        isConnected = true;
+    }
+}
 
 /* Login */
 router.post('/login', async function (req, res) {
     try {
+        await connectToDatabase();
         const reqIDP = config.getIdpOrDefault(req.body['IDP']);
         const { name, lastName, tokens, email, idp } = await idpClient.login(req.body['code'], reqIDP, config.getUrlOrDefault(reqIDP, req.body['redirectUri']));
         if (!await userService.isEmailAndIDPLoginPermitted(email, idp)) {
             throw { statusCode: 403, message: ERROR.INACTIVE_USER };
         }
+        req.session = {};
         req.session.userInfo = {
             email: email,
             IDP: idp,
