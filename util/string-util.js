@@ -3,6 +3,11 @@ function isCaseInsensitiveEqual(source, target) {
     if (source.toLowerCase() === target.toLowerCase()) return true;
 }
 
+const isUndefined = (p) => {
+    return p === undefined;
+}
+
 module.exports = {
-    isCaseInsensitiveEqual
+    isCaseInsensitiveEqual,
+    isUndefined
 }
