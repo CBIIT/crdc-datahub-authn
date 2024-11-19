@@ -38,7 +38,7 @@ const config = {
     const configurationCollection = new MongoDBCollection(dbConnector.client, DATABASE_NAME, CONFIGURATION_COLLECTION);
     // SCHEDULED_JOBS
     const result = await configurationCollection.aggregate([{
-      "$match": { NIH_CONFIGURATION }
+      "$match": { type: NIH_CONFIGURATION }
     }, {"$limit": 1}]);
     const nihConfigurationConf = (result?.length === 1) ? result[0] : null;
     const nihClientID = nihConfigurationConf?.[NIH_CLIENT_ID];
