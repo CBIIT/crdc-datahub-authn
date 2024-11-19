@@ -79,11 +79,4 @@ if (!config.date) {
   config.date = new Date();
 }
 
-async function findConfigurationByType(type, configurationCollection) {
-  const result = await configurationCollection.aggregate([{
-    "$match": { type }
-  }, {"$limit": 1}]);
-  return (result?.length === 1) ? result[0] : null;
-}
-
 module.exports = config;
