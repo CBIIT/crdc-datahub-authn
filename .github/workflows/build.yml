@@ -69,7 +69,7 @@ jobs:
 
   push:
     runs-on: ubuntu-latest
-    needs: [build, test]
+    needs: [build]
 
     steps:
       - name: Configure AWS Role to assume using OIDC authentication
