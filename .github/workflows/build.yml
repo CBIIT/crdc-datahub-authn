@@ -89,13 +89,13 @@ jobs:
 
       - name: Login to Amazon ECR
         env:
-          REGISTRY_URL: $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+          REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         run: |
           aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY_URL
 
       - name: Push Docker Image to ECR
         env:
-          REGISTRY_URL: $AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+          REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         run: |
           echo "Pushing: $ECR_REPO:$CODE_BRANCH.${{ github.run_number }}"
           docker push $REGISTRY_URL/$ECR_REPO:$CODE_BRANCH.${{ github.run_number }}
