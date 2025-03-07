@@ -25,6 +25,7 @@ jobs:
   build:
     name: Build authn image
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     env:
       ECR_REPO: "crdc-datahub-authn"
       SERVICE: "authn"
@@ -49,6 +50,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     needs: build
     if: github.event.inputs.trivy_test_scan == 'true'
 
@@ -61,6 +63,7 @@ jobs:
 
   push:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     needs: [build]
 
     steps:
