@@ -9,15 +9,7 @@ on:
       environment:
         description: "Choose the environment to build"
         required: true
-        default: "dev"
-        type: choice
-        options:
-          - dev
-          - dev2
-          - qa
-          - qa2
-          - stage
-          - prod
+        type: environment
       code_branch:
         description: "Branch to build"
         required: true
