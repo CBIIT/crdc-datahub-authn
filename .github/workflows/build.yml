@@ -51,6 +51,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    env:
+      ECR_REPO: "crdc-datahub-authn"
+      SERVICE: "authn"
+      REGION: "us-east-1"
+      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     needs: build
     if: github.event.inputs.trivy_test_scan == 'true'
 
@@ -64,13 +71,20 @@ jobs:
   push:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    env:
+      ECR_REPO: "crdc-datahub-authn"
+      SERVICE: "authn"
+      REGION: "us-east-1"
+      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
     needs: [build]
 
     steps:
       - name: Configure AWS Role to assume using OIDC authentication
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: us-east-1 
+          aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
 
       - name: Login to Amazon ECR
