@@ -75,8 +75,8 @@ jobs:
       - name: Configure AWS Role to assume using OIDC authentication
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
 
       - name: Login to Amazon ECR
         env:
