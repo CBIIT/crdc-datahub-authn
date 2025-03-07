@@ -33,9 +33,9 @@ env:
   SERVICE: "authn"
   ECR_REPO: "crdc-hub-authn"
   REGION: "us-east-1"
-  export REGISTRY_URL="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$REGION.amazonaws.com"
+  REGISTRY_URL="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$REGION.amazonaws.com"
   CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
-  export CODE_FOLDER="$PROJECT-$SERVICE"
+  CODE_FOLDER="$PROJECT-$SERVICE"
   AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
 
 jobs:
