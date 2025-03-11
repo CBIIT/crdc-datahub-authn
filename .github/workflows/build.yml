@@ -68,8 +68,8 @@ jobs:
         run:  |
           aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY_URL
  
-      - name: Sanitize Branch Name
-        run: echo "CODE_BRANCH=$(echo '${{ github.event.inputs.code_branch }}' | sed 's|/|-|g')" >> $GITHUB_ENV
+#      - name: Sanitize Branch Name
+#        run: echo "CODE_BRANCH=$(echo '${{ github.event.inputs.code_branch }}' | sed 's|/|-|g')" >> $GITHUB_ENV
 
       - name: Debug Registry URL
         run: echo "Registry URL: ${{ steps.login-ecr.outputs.registry }}"
