@@ -69,13 +69,6 @@ jobs:
           aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY_URL
  
 
-      - name: Debug Registry URL
-        run: echo "Registry URL: ${{ steps.login-ecr.outputs.registry }}"
-
-      - name: List local docker images
-        run: docker images
-
-      
       - name: Push Docker images
         id: push-image
         if: success()
