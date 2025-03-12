@@ -49,9 +49,6 @@ jobs:
           git fetch --all
           git branch -r
 
-      - name: List All branches via Github API
-        run: |
-          gh api repos/${{ github.repository }}/branches --jq '.[].name'
 
       - name: Build Docker Image
         id: build-image
