@@ -75,6 +75,7 @@ jobs:
         env:
           REGISTRY_URL: ${{ steps.login-ecr.outputs.registry }} 
           ECR_REPO: "crdc-datahub-authn"
+          IMAGE_NAME=$REGISTRY_URL/$ECR_REPO:${GITHUB_REF##*/}.${{ github.run_number }}
         run: |
           echo "Pushing: $IMAGE_NAME"
           docker push $IMAGE_NAME
