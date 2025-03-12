@@ -9,6 +9,10 @@ on:
       environment:
         description: env to build
         type: environment
+      code_branch:
+        description: branch to build
+        required: false
+        default: main
       trivy_test_scan:
         description: "Run Trivy Test Scan"
         required: true
@@ -29,27 +33,28 @@ jobs:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
     steps:
-      - name: Extract branch name
-        id: extract_branch
-        shell: bash
-        run: |
-          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
-          echo "branch=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
-
       - name: Checkout Code Repository
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.extract_branch.outputs.branch }}
           submodules: true
 
+      - name: Extract branch name
+        id: extract_branch
+        run: |
+          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
+
+      - name: List All Branches
+        run: |
+          git fetch --all
+          git branch -r
+
       - name: Build Docker Image
         id: build-image
         env:
           REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
         run: |
-          IMAGE_NAME=$REGISTRY_URL/$ECR_REPO:$branch.${{ github.run_number }}
-          echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
           echo "Building: $IMAGE_NAME"
           docker build --no-cache -t $IMAGE_NAME .
 
