@@ -6,6 +6,9 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: env to build
+        type: environment
       trivy_test_scan:
         description: "Run Trivy Test Scan"
         required: true
@@ -22,7 +25,6 @@ jobs:
       ECR_REPO: "crdc-datahub-authn"
       SERVICE: "authn"
       REGION: "us-east-1"
-      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
