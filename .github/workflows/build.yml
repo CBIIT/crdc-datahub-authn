@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     env:
-      ECR_REPO: "crdc-datahub-authn"
+      ECR_REPO: "crdc-hub-authn"
       SERVICE: "authn"
       REGION: "us-east-1"
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
@@ -36,7 +36,6 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ steps.extract_branch.outputs.branch }}
           submodules: true
 
       - name: Extract branch name
