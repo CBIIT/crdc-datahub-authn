@@ -29,6 +29,7 @@ jobs:
       ECR_REPO: "crdc-hub-authn"
       SERVICE: "authn"
       REGION: "us-east-1"
+      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
@@ -36,6 +37,7 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
         with:
+          ref: ${{ env.CODE_BRANCH }}
           submodules: true
 
       - name: Extract branch name
@@ -53,7 +55,7 @@ jobs:
         id: build-image
         env:
           REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.CODE_BRANCH }}.${{ github.run_number }}
         run: |
           echo "Building: $IMAGE_NAME"
           docker build --no-cache -t $IMAGE_NAME .
@@ -85,7 +87,7 @@ jobs:
         if: success()
         env:
           REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com
-          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.CODE_BRANCH }}.${{ github.run_number }}
         run: |
           echo "Pushing: $IMAGE_NAME"
           docker push $IMAGE_NAME
