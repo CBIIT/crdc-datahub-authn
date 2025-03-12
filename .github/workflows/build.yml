@@ -49,6 +49,10 @@ jobs:
           git fetch --all
           git branch -r
 
+      - name: List All branches via Github API
+        run: |
+          gh api repos/${{ github.repository }}/branches --jq '.[].name'
+
       - name: Build Docker Image
         id: build-image
         env:
@@ -84,8 +88,8 @@ jobs:
         id: push-image
         if: success()
         env:
-          REGISTRY_URL: ${{ steps.login-ecr.outputs.registry }} 
-          ECR_REPO: "crdc-datahub-authn"
+          REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
         run: |
           echo "Pushing: $IMAGE_NAME"
           docker push $IMAGE_NAME
