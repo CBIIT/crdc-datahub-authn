@@ -43,7 +43,10 @@ jobs:
       - name: Extract branch name
         id: extract_branch
         run: |
-          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
+          echo "Current branch is: $BRANCH_NAME"
+#          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
       - name: List All Branches
         run: |
@@ -63,6 +66,9 @@ jobs:
       - name: Run Trivy test scan
         id: trivy-scan
         if: github.event.inputs.trivy_test_scan == 'true'
+        env:
+          REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.CODE_BRANCH }}.${{ github.run_number }}
         run: |
           echo "Testing Image with Trivy: $IMAGE_NAME"
           docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock aquasecurity/trivy:latest \
