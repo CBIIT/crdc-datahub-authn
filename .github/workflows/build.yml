@@ -8,6 +8,7 @@ on:
     inputs:
       environment:
         description: env to build
+        required: true
         type: environment
       trivy_test_scan:
         description: "Run Trivy Test Scan"
