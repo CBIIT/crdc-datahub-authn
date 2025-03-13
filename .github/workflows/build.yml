@@ -12,7 +12,7 @@ on:
       code_branch:
         description: branch to build
         required: false
-        default: main
+#        default: main
       trivy_test_scan:
         description: "Run Trivy Test Scan"
         required: true
@@ -29,7 +29,7 @@ jobs:
       ECR_REPO: "crdc-hub-authn"
       SERVICE: "authn"
       REGION: "us-east-1"
-      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
+#      CODE_BRANCH: "${{ github.event.inputs.code_branch }}"
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
 
@@ -37,16 +37,16 @@ jobs:
       - name: Checkout Code Repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ env.CODE_BRANCH }}
+          ref: github.ref_name
           submodules: true
 
       - name: Extract branch name
         id: extract_branch
         run: |
-          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
-          echo "Current branch is: $BRANCH_NAME"
-#          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
+#          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+#          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
+#          echo "Current branch is: $BRANCH_NAME"
+          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
       - name: List All Branches
         run: |
