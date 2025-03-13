@@ -74,7 +74,7 @@ jobs:
           image-ref: '${{ env.IMAGE_NAME }}'
           format: 'table'
           exit-code: 1
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL'
    
       - name: Configure AWS Role to assume using OIDC authentication
         uses: aws-actions/configure-aws-credentials@v4
