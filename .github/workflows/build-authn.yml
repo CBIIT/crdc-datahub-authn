@@ -9,9 +9,9 @@ on:
       environment:
         description: env to build
         type: environment
-      code_branch:
-        description: branch to build
-        required: false
+#      code_branch:
+#        description: branch to build
+#        required: false
 #        default: main
       trivy_test_scan:
         description: "Run Trivy Test Scan"
@@ -48,10 +48,10 @@ jobs:
           echo "Current branch is: $BRANCH_NAME"
 #          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
-      - name: List All Branches
-        run: |
-          git fetch --all
-          git branch -r
+#      - name: List All Branches
+#        run: |
+#          git fetch --all
+#          git branch -r
 
 
       - name: Build Docker Image
