@@ -54,12 +54,31 @@ jobs:
 #          git fetch --all
 #          git branch -r
 
+      - name: Set Image Tag
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+        # Get all tags for the repo and find the latest tag for the branch being built
+          git fetch --tags --force --quiet
+          tag=$(git tag -l $BRANCH_NAME* | tail -1)
+          if  [ ! -z "$tag" ];
+          then
+          # Increment the build number if a tag is found
+            build_num=$(echo "${tag##*.}")
+            build_num=$((build_num+1))
+            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+          else
+          # If no tag is found create a new tag name
+            build_num=1
+            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+          fi
 
       - name: Build Docker Image
         id: build-image
         env:
           REGISTRY_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
+          #IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.branch }}.${{ github.run_number }}
+          IMAGE_NAME: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPO }}:${{ env.IMAGE_TAG }}
         run: |
           echo "Building: $IMAGE_NAME"
           docker build --no-cache -t $IMAGE_NAME .
