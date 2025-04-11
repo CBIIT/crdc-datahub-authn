@@ -41,12 +41,12 @@ jobs:
           ref: ${{ github.ref_name }}
           submodules: true
 
-      - name: Extract branch name
-        id: extract_branch
-        run: |
-          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
-          echo "Current branch is: $BRANCH_NAME"
+#      - name: Extract branch name
+#        id: extract_branch
+#        run: |
+#          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+#          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
+#          echo "Current branch is: $BRANCH_NAME"
 #          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
 
 #      - name: List All Branches
