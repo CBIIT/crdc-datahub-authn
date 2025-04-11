@@ -41,37 +41,50 @@ jobs:
           ref: ${{ github.ref_name }}
           submodules: true
 
-#      - name: Extract branch name
-#        id: extract_branch
-#        run: |
+      - name: Extract branch name
+        id: extract_branch
+        run: |
 #          BRANCH_NAME=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-#          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
-#          echo "Current branch is: $BRANCH_NAME"
+          BRANCH_NAME: ${{ github.ref_name }}
+          echo "branch=$BRANCH_NAME" >> "$GITHUB_ENV"
+          echo "Current branch is: $BRANCH_NAME"
 #          echo "branch=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          git fetch --tags --force --quiet
+          tag=$(git tag -l $BRANCH_NAME* | tail -1)
+          if  [ ! -z "$tag" ];
+          then
+            # Increment the build number if a tag is found
+            build_num=$(echo "${tag##*.}")
+            build_num=$((build_num+1))
+            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+          else
+            # If no tag is found create a new tag name
+            build_num=1
+            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+          fi
 
 #      - name: List All Branches
 #        run: |
 #          git fetch --all
 #          git branch -r
-
-      - name: Set Image Tag
-        env:
-          BRANCH_NAME: ${{ github.ref_name }}
-        run: |
+#      - name: Set Image Tag
+#        env:
+#          BRANCH_NAME: ${{ github.ref_name }}
+#        run: |
         # Get all tags for the repo and find the latest tag for the branch being built
-          git fetch --tags --force --quiet
-          tag=$(git tag -l $BRANCH_NAME* | tail -1)
-          if  [ ! -z "$tag" ];
-          then
+#          git fetch --tags --force --quiet
+#          tag=$(git tag -l $BRANCH_NAME* | tail -1)
+#          if  [ ! -z "$tag" ];
+#          then
           # Increment the build number if a tag is found
-            build_num=$(echo "${tag##*.}")
-            build_num=$((build_num+1))
-            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
-          else
+#            build_num=$(echo "${tag##*.}")
+#            build_num=$((build_num+1))
+#            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+#          else
           # If no tag is found create a new tag name
-            build_num=1
-            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
-          fi
+#            build_num=1
+#            echo "IMAGE_TAG=$BRANCH_NAME.$build_num" >> $GITHUB_ENV
+#          fi
 
       - name: Build Docker Image
         id: build-image
