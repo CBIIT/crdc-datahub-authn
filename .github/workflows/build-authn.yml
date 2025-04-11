@@ -75,6 +75,13 @@ jobs:
           format: 'table'
           exit-code: 1
           severity: 'CRITICAL,HIGH'
+
+      - name: Create git tag for image
+        run: |
+        git config user.name "GitHub Actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git tag ${{ env.IMAGE_TAG }}
+        git push origin ${{ env.IMAGE_TAG }}
    
       - name: Configure AWS Role to assume using OIDC authentication
         uses: aws-actions/configure-aws-credentials@v4
