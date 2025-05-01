@@ -21,6 +21,7 @@ dbConnector.connect().then(() => {
 /* Login */
 router.post('/login', async function (req, res) {
     try {
+        console.log("request login API");
         const reqIDP = config.getIdpOrDefault(req.body['IDP']);
         const { name, lastName, tokens, email, idp } = await idpClient.login(req.body['code'], reqIDP, config.getUrlOrDefault(reqIDP, req.body['redirectUri']));
         console.log(`email:${email} IDP:${idp} is logging in`);
@@ -53,6 +54,7 @@ router.post('/login', async function (req, res) {
 /* Logout */
 router.post('/logout', async function (req, res, next) {
     try {
+        console.log("request logout API");
         const idp = config.getIdpOrDefault(req.body['IDP']);
         const userInfo = req?.session?.userInfo;
         if (userInfo?.email && userInfo?.IDP) await logCollection.insert(LogoutEvent.create(userInfo.email, userInfo.IDP));
@@ -71,6 +73,7 @@ router.post('/logout', async function (req, res, next) {
 // Calling this API will refresh the session
 router.post('/authenticated', async function (req, res, next) {
     try {
+        console.log("request authenticated API");
         if (req.session.tokens) {
             return res.status(200).send({status: true});
         } else {
