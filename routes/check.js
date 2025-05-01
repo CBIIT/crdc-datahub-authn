@@ -16,6 +16,7 @@ dbConnector.connect().then( async () => {
 });
 
 router.get('/session-ttl',async function(req, res){
+    console.log("request session-ttl API");
     let sessionID
     let response
     if (!req || !req.cookies || !req.cookies["connect.sid"]){
@@ -36,16 +37,19 @@ router.get('/session-ttl',async function(req, res){
 
 /* GET ping-ping for health checking. */
 router.get('/ping', function (req, res, next) {
+    console.log("request ping API");
     res.send(`pong`);
 });
 
 // /* GET version for health checking and version checking. */
 router.get('/version', async function (req, res, next) {
+    console.log("request version API");
     let body = {
         version: config.version,
         date: config.date
     };
     if (!(await MongoDBHealthCheck(config.mongo_db_connection_string))) {
+        console.error("version API failed due to database connection");
         body.error = ERROR.MONGODB_HEALTH_CHECK_FAILED;
         res.status(503);
     }
