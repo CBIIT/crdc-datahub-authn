@@ -75,8 +75,10 @@ router.post('/authenticated', async function (req, res, next) {
     try {
         console.log("request authenticated API");
         if (req.session.tokens) {
+            console.log("authenticated API - success");
             return res.status(200).send({status: true});
         } else {
+            console.log("authenticated API - failed");
             return res.status(200).send({status: false});
         }
     } catch (e) {
