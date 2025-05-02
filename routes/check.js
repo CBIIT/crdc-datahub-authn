@@ -37,7 +37,6 @@ router.get('/session-ttl',async function(req, res){
 
 /* GET ping-ping for health checking. */
 router.get('/ping', function (req, res, next) {
-    console.log("request ping API");
     res.send(`pong`);
 });
 
