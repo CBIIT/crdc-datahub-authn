@@ -17,7 +17,7 @@ on:
         description: "Run Trivy Test Scan"
         required: true
         type: boolean
-        default: false
+        default: true
 
 
 jobs:
